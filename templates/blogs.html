@@ -1,0 +1,12 @@
+{% extends "front.html" %}
+{% block content %}
+                <h4><small>RECENT POSTS</small></h4>
+                <hr>
+                {% for post in posts %}
+                    <h2><a class = "link" href = "/blog/{{post.key().id()}}">{{post.subject}}</a></h2>
+                    <h5><span class="glyphicon glyphicon-time"></span> Post by <strong>{{post.author}}</strong> {{post.date}}</h5>
+                    <br>
+                    <pre>{{post.content}}</pre>
+                    <hr>
+                {% endfor %}
+{% endblock %}

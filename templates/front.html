@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Home</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <style>
+    .row.content {height: 1500px}
+    .sidenav {
+      background-color: #f1f1f1;
+      height: 100%;
+    }
+    @media screen and (max-width: 767px) {
+      .sidenav {
+        height: auto;
+        padding: 15px;
+      }
+      .row.content {height: auto;}
+    }
+    .link{
+        color:black;
+    }
+  </style>
+</head>
+<body>
+    <nav class = "navbar navbar-inverse">
+        <div class = "container-fluid">
+            <div class = "navbar-header">
+                <span class = "navbar-brand">Blog Star</span>
+            </div>
+            <ul class="nav navbar-nav navbar-right">
+                {% if not user %}
+                    <li><a href="/blog/signup"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
+                    <li><a href="/blog/login"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+                {% else %}
+                    <li><a href="/blog/welcome"><span class="glyphicon glyphicon-user"></span>Welcome {{user.name}}</a></li>
+                    <li><a href="/blog/logout"><span class="glyphicon glyphicon-off"></span>Log-Out</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+    <div class = "container-fluid">
+        <div class = "row content">
+            <div class="col-sm-3 sidenav">
+                <h2> BlogStar </h2>
+                <ul class="nav nav-pills nav-stacked">
+                    <li class="active">
+                        <a href="/blog">All Blogs</a>
+                    </li>
+                    <li>
+                        <a href="/blog?id=1">My Blog</a>
+                    </li>
+                    <li>
+                        <a href="/blog/newpost">Add A Post</a>
+                    </li>
+                    <li>
+                        <a href="/about">About Developer</a>
+                    </li>
+                </ul>
+                <br>
+            </div>
+            <div class = "col-sm-9">
+                {% block content %}
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>

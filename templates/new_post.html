@@ -1,0 +1,43 @@
+{% extends "front.html" %}
+{%block content%}
+    <div class="container">
+        <h2 style="text-align: center; margin-right: 250px">New Post</h2>
+        <form class = "form-horizontal" method="post">
+            <div class = "form-group">
+                <label class = "control-label col-sm-2">Subject</label>
+                <div class="col-sm-6 input-group">
+                    <input type="text" class = "form-control" name="subject" value="{{subject}}" placeholder="Enter Blog Title">
+                    <span class = "input-group-addon"><i class = "glyphicon glyphicon-education"></i></span>
+                </div>
+            </div>
+            {% if error_subject == "Subject Cannot Be Blank Duhh!!" %}
+            <div class = "form-group">
+            <div class="alert alert-danger alert-dismissable col-sm-offset-2 col-sm-6">
+                <a href="" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                <strong>Invalid!</strong> Subject Cannot Be Blank Duhh!!
+            </div>
+            </div>
+            {% endif %}
+            <div class = "form-group">
+                <label class = "control-label col-sm-2">Blog</label>
+                <div class="col-sm-6 input-group">
+                    <textarea  class = "form-control" name="blog" placeholder="Enter Something..." rows = 20>{{blog}}</textarea>
+                </div>
+            </div>
+            {% if error_blog == "Blank" %}
+            <div class = "form-group">
+            <div class="alert alert-danger alert-dismissable col-sm-offset-2 col-sm-6">
+                <a href="" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                <strong>Invalid!</strong> Blog Cannot Be Blank Duhh!!
+            </div>
+            </div>
+            {% endif %}
+
+            <div class="form-group">
+                <div class="col-sm-offset-2">
+                    <button type="submit" class="btn btn-success">Submit</button>
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends "front.html" %}
+{%block content%}
+<div class="media">
+    <div class="media-left">
+      <img src="https://www.w3schools.com/bootstrap/img_avatar1.png" class="media-object" style="width:45px">
+    </div>
+    <div class="media-body">
+      <h4 class="media-heading">{{post.author}}<small><i>  Posted on {{post.date}}</i></small></h4>
+      <pre style="width: 600px;">{{post.content}}</pre>
+      <div class="media">
+        <div class="media-left">
+          <img src="https://www.w3schools.com/bootstrap/img_avatar1.png" class="media-object" style="width:45px">
+        </div>
+        <div class="media-body">
+          <h4 class="media-heading"><a href = '/blog/comment/{{x.key().id()}}'>{{x.author_name}}</a><small><i> Posted on {{x.date}}</i></small></h4>
+          <p>{{x.comment}}</p>
+          <form method="post">
+            <textarea name = "commentbox" placeholder="Enter the Edited Comment Here..." rows="5" cols="103"></textarea><br>
+            <input type="submit" name = "editcomment" class="btn btn-success" value = "Edit Comment">
+            <input type="submit" name = "deletecomment" class="btn btn-warning" value = "Delete Comment">
+            <input type="submit" name = "cancel" class="btn btn-primary" value = "Cancel">
+        </form>
+        {% if error %}
+        <br>
+        <div class="alert alert-danger alert-dismissable col-sm-offset-2 col-sm-6">
+        <a href="" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+        <strong>Invalid!</strong> {{error}}
+        </div>
+        <br>
+        {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

@@ -1,0 +1,80 @@
+{% extends "front.html" %}
+{%block content%}
+  <div class="container">
+    <h2> Signup form </h2>
+    <form class = "form-horizontal" method = "post">
+      <div class = "form-group">
+        <label class = "control-label col-sm-2">Username</label>
+        <div class="col-sm-6 input-group">
+          <input type="text" class = "form-control" name="username" value="{{username}}" placeholder="Enter Username">
+          <span class = "input-group-addon"><i class = "glyphicon glyphicon-user"></i></span>
+        </div>
+      </div>
+      <div class = "form-group">
+        {% if error_username == "That's not a valid username." %}
+        <div class="alert alert-danger alert-dismissable col-sm-offset-2 col-sm-6">
+        <a href="" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+        <strong>Invalid!</strong> That's not a valid username there should be no spaces.
+        </div>
+        {% elif error_username == "That user already exists" %}
+        <div class="alert alert-danger alert-dismissable col-sm-offset-2 col-sm-6">
+        <a href="" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+        <strong>Invalid!</strong> That user already exists
+        </div>
+        {% endif %}
+
+      </div>
+      <div class = "form-group">
+        <label class = "control-label col-sm-2">Password</label>
+        <div class="col-sm-6 input-group">
+          <input type="password" class = "form-control" name="password" value="" placeholder="Enter Password">
+          <span class = "input-group-addon"><i class = "glyphicon glyphicon-eye-open"></i></span>
+        </div>
+      </div>
+      <div class = "form-group">
+        {% if error_password == "That wasn't a valid password." %}
+        <div class="alert alert-danger alert-dismissable col-sm-offset-2 col-sm-6">
+        <a href="" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+        <strong>Invalid!</strong> That wasn't a valid password.
+        </div>
+        {% endif %}
+      </div>
+      <div class = "form-group">
+        <label class = "control-label col-sm-2">Verify Password</label>
+        <div class="col-sm-6 input-group">
+          <input type="password" class = "form-control" name="verify" value="" placeholder="Retype Password">
+          <span class = "input-group-addon"><i class = "glyphicon glyphicon-eye-close"></i></span>
+        </div>
+      </div>
+      <div class = "form-group">
+        {% if error_verify == "Your passwords didn't match." %}
+        <div class="alert alert-danger alert-dismissable col-sm-offset-2 col-sm-6">
+        <a href="" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+        <strong>Invalid!</strong> Your passwords didn't match.
+        </div>
+        {% endif %}
+      </div>
+      <div class = "form-group">
+        <label class = "control-label col-sm-2">Email( Optional )</label>
+        <div class="col-sm-6 input-group">
+          <input type="text" class = "form-control" name="email" value="{{email}}" placeholder="Enter Email Here...">
+          <span class = "input-group-addon"><i class = "glyphicon glyphicon-envelope"></i></span>
+        </div>
+      </div>
+      <div class = "form-group">
+        {% if error_email == "That's not a valid email." %}
+        <div class="alert alert-danger alert-dismissable col-sm-offset-2 col-sm-6">
+        <a href="" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+        <strong>Invalid!</strong> That's not a valid email.
+        </div>
+        {% endif %}
+      </div>
+      <div class="form-group">
+      <div class="col-sm-offset-2">
+        <button type="submit" class="btn btn-success">Submit</button>
+        <a href="/blog/login" class="btn btn-danger" role="button">Already-a-user?</a>
+      </div>
+    </div>
+    </form>
+  </div>
+{% endblock %}

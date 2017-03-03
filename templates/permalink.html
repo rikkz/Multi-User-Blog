@@ -1,0 +1,60 @@
+{% extends "front.html" %}
+{% block content %}
+    <h1>{{post.subject}}</h1>
+    <h4><span class="glyphicon glyphicon-time"></span> Post by <strong>{{post.author}}</strong> {{post.date}}</h4>
+    <pre>{{post.content}}</pre>
+    <div>
+    <form method="post">
+        <input type="submit" name = "edit" class="btn btn-success" value = "Edit Post">
+        <input type="submit" name = "delete" class="btn btn-warning" value = "Delete Post">
+        <span style = "font-size: 1.7em;font-weight: bolder;left: 600px" class="glyphicon glyphicon-thumbs-up"><input name="like" type="submit" value = "{{likes}}"></span>
+        <span style = "font-size: 1.7em;font-weight: bolder;left: 670px" class="glyphicon glyphicon-thumbs-down"><input type="submit" name = "unlike" value = "{{unlikes}}"></span>
+    </form>
+    <br>
+    {% if error %}
+        <div class="alert alert-danger alert-dismissable col-sm-offset-2 col-sm-6">
+        <a href="" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+        <strong>Invalid!</strong> {{error}}
+        </div>
+    {% endif %}
+    <form class = "form-horizontal" method="post">
+        <div class="form-group">
+            <div class = "col-sm-8">
+                <textarea name = "commentbox" placeholder="Leave a Comment Here..." rows="5" cols="103"></textarea>
+            </div>
+            <br><br><br><br><br><br>
+            {% if error %}
+            <br><br><br><br>
+            {% endif %}
+            <div class = "col-sm-offset-8">
+                <input type="submit" name = "comment" class="btn btn-success" value = "Comment">
+            </div>
+        </div>
+    </form>
+
+  <div class="container">
+  <div class="media">
+    <div class="media-left">
+      <img src="https://www.w3schools.com/bootstrap/img_avatar1.png" class="media-object" style="width:45px">
+    </div>
+    <div class="media-body">
+      <h4 class="media-heading">{{post.author}}<small><i>  Posted on {{post.date}}</i></small></h4>
+      <pre style="width: 600px;">{{post.content}}</pre>
+      <h2>Comment Down Here</h2>
+      {% for x in comments %}
+      <div class="media">
+        <div class="media-left">
+          <img src="https://www.w3schools.com/bootstrap/img_avatar1.png" class="media-object" style="width:45px">
+        </div>
+        <div class="media-body">
+          <h4 class="media-heading">{{x.author_name}}<small><i> Posted on {{x.date}}</i></small></h4>
+          <p>{{x.comment}}</p><a href = '/blog/comment/{{x.key().id()}}'><button class="btn btn-warning">Edit or Delete</button></a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+</div>
+{% endblock %}

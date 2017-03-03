@@ -1,0 +1,36 @@
+{% extends "front.html" %}
+{%block content%}
+  <div class = "container">
+    <div>
+      <h3>Login</h3>
+    </div>
+    <div>
+      <strong>
+        <em>Please Enter a Valid Username and Password to Login</em>
+      </strong>
+    </div>
+    <br>
+    <form method = "post">
+      <div class = "input-group">
+        <span class = "input-group-addon"><i class = "glyphicon glyphicon-user"></i></span>
+        <input type = "text" class = "form-control" style="width:600px;" name = "username" placeholder="Enter a Username" value ="{{username}}">
+      </div>
+      <br>
+      <div class = "input-group">
+        <span class = "input-group-addon"><i class = "glyphicon glyphicon-lock"></i></span>
+        <input type = "password" class = "form-control" style="width:600px;" name = "password" placeholder="Enter a Password" value = "">
+      </div>
+      <br>
+      {% if error == "Invalid Login" %}
+      <div class="alert alert-danger alert-dismissable" style="width:640px;">
+        <a href="" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+        <strong>Invalid!</strong> Either Username or Password or Both are Invalid!!!!
+      </div>
+      {% endif %}
+      <div>
+        <input type="submit" class = "btn btn-success">
+        <a href="/blog/signup" class="btn btn-danger" role="button">New user?</a>
+      </div>
+    </form>
+  </div>
+{% endblock %}
