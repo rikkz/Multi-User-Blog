@@ -24,7 +24,7 @@
   <ul type="disc">
     <li> From within the project directory, start the local development server with the following command: 
       <pre> dev_appserver.py app.yaml </pre>
-      <p>The local development server is now running and listening for requests on port 8080.</p>
+      <p>The local development server is now running and listening for requests on port 16081.</p>
     </li>
-    <li> Visit http://localhost:8080/blog in your web browser to view the app. </li>
+    <li> Visit http://localhost:16081/blog in your web browser to view the app. </li>
   </ul>
