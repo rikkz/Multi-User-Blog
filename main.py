@@ -313,28 +313,28 @@ class NewPost(BlogHandler):
     def post(self):
         if not self.user:
             self.redirect('/blog/login')
-
-        subject = self.request.get('subject')
-        blog = self.request.get('blog')
-        author = self.user.name
-
-        error_subject = 'Subject Cannot Be Blank Duhh!!'
-        error_blog = 'Blank'
-
-        if subject:
-            error_subject = ''
-        if blog:
-            error_blog = ''
-
-        if not subject or not blog:
-            self.render('new_post.html', subject=subject, blog=blog,
-                        error_subject=error_subject,
-                        error_blog=error_blog)
         else:
-            p = Post(parent=blog_key(), subject=subject, content=blog,
-                     author=author, author_id=str(self.user.key().id()))
-            p.put()
-            self.redirect('/blog/%s' % str(p.key().id()))
+            subject = self.request.get('subject')
+            blog = self.request.get('blog')
+            author = self.user.name
+
+            error_subject = 'Subject Cannot Be Blank Duhh!!'
+            error_blog = 'Blank'
+
+            if subject:
+                error_subject = ''
+            if blog:
+                error_blog = ''
+
+            if not subject or not blog:
+                self.render('new_post.html', subject=subject, blog=blog,
+                            error_subject=error_subject,
+                            error_blog=error_blog)
+            else:
+                p = Post(parent=blog_key(), subject=subject, content=blog,
+                        author=author, author_id=str(self.user.key().id()))
+                p.put()
+                self.redirect('/blog/%s' % str(p.key().id()))
 
 
 class PostPage(BlogHandler):
@@ -342,8 +342,14 @@ class PostPage(BlogHandler):
     def get(self, id):
         if not self.user:
             self.redirect('/blog/login')
+
         key = db.Key.from_path('Post', int(id), parent=blog_key())
         post = db.get(key)
+
+        if not post:
+            self.redirect('/blog/login')
+            return
+
         prev_comments = Comments.by_author(post)
         likes = Likes.by_author(post)
         unlikes = Unlikes.by_author(post)
@@ -352,131 +358,189 @@ class PostPage(BlogHandler):
                         unlikes=unlikes, comments=prev_comments)
 
     def post(self, id):
-        user_id = User.by_name(self.user.name)
-        key = db.Key.from_path('Post', int(id), parent=blog_key())
-        post = db.get(key)
-        likes = Likes.by_author(post)
-        unlikes = Unlikes.by_author(post)
-        prev_unliked = Unlikes.check_likes(post, user_id)
-        prev_liked = Likes.check_likes(post, user_id)
-        prev_comments = Comments.by_author(post)
 
         if not self.user:
             self.redirect('/blog/login')
+            return
+        else:
 
-        if self.request.get('edit'):
-            if post.author_id == str(self.user.key().id()):
-                self.redirect('/blog/editPost/%s'
-                              % str(post.key().id()))
-            else:
-                self.render(
-                    'permalink.html',
-                    post=post,
-                    error='You cannot edit this post',
-                    likes=likes,
-                    unlikes=unlikes,
-                    comments=prev_comments,
-                    )
+            user_id = User.by_name(self.user.name)
+            key = db.Key.from_path('Post', int(id), parent=blog_key())
+            post = db.get(key)
 
-        if self.request.get('delete'):
+            if not post:
+                self.redirect('/blog/login')
+                return
 
-            if post.author_id == str(self.user.key().id()):
-                self.redirect('/blog/deletepost/%s'
-                              % str(post.key().id()))
-            else:
-                self.render(
-                    'permalink.html',
-                    post=post,
-                    error='You cannot delete this post',
-                    likes=likes,
-                    unlikes=unlikes,
-                    comments=prev_comments,
-                    )
+            likes = Likes.by_author(post)
+            unlikes = Unlikes.by_author(post)
+            prev_unliked = Unlikes.check_likes(post, user_id)
+            prev_liked = Likes.check_likes(post, user_id)
+            prev_comments = Comments.by_author(post)
 
-        if self.request.get('like'):
-            if post.author_id != str(self.user.key().id()):
-                if prev_liked == 0:
-                    l = Likes(post=post, user=user_id)
-                    l.put()
-                    time.sleep(0.1)
-                    self.redirect('/blog/%s' % str(post.key().id()))
+            if self.request.get('edit'):
+                if not self.user:
+                    return self.redirect('/blog/login')
+
+                if post.author_id == str(self.user.key().id()):
+                    self.redirect('/blog/editPost/%s'
+                                % str(post.key().id()))
                 else:
                     self.render(
                         'permalink.html',
                         post=post,
-                        error='You have already liked it',
+                        error='You cannot edit this post',
                         likes=likes,
                         unlikes=unlikes,
                         comments=prev_comments,
                         )
-            else:
-                self.render(
-                    'permalink.html',
-                    post=post,
-                    error='You cannot like your own post',
-                    likes=likes,
-                    unlikes=unlikes,
-                    comments=prev_comments,
-                    )
 
-        if self.request.get('unlike'):
-            if post.author_id != str(self.user.key().id()):
-                if prev_unliked == 0:
-                    l = Unlikes(post=post, user=user_id)
-                    l.put()
-                    time.sleep(0.1)
-                    self.redirect('/blog/%s' % str(post.key().id()))
+            if self.request.get('delete'):
+
+                if not self.user:
+                    self.redirect('/blog/login')
+                    return
+
+                if post.author_id == str(self.user.key().id()):
+                    self.redirect('/blog/deletepost/%s'
+                                % str(post.key().id()))
                 else:
                     self.render(
                         'permalink.html',
                         post=post,
-                        error='You have already unliked it',
+                        error='You cannot delete this post',
                         likes=likes,
                         unlikes=unlikes,
                         comments=prev_comments,
                         )
-            else:
-                self.render(
-                    'permalink.html',
-                    post=post,
-                    error='You cannot unlike your own post',
-                    likes=likes,
-                    unlikes=unlikes,
-                    comments=prev_comments,
-                    )
 
-        if self.request.get('comment'):
-            comment = self.request.get('commentbox')
-            if not comment:
-                self.render(
-                    'permalink.html',
-                    post=post,
-                    error='You cannot submit a blank comment',
-                    likes=likes,
-                    unlikes=unlikes,
-                    comments=prev_comments,
-                    )
-            else:
-                c = Comments(post=post, user=user_id, comment=comment,
+            if self.request.get('like'):
+
+                if not self.user:
+                    self.redirect('/blog/login')
+                    return
+
+                if post.author_id != str(self.user.key().id()):
+                    if prev_liked == 0:
+                        l = Likes(post=post, user=user_id)
+                        l.put()
+                        time.sleep(0.1)
+                        self.redirect('/blog/%s' % str(post.key().id()))
+                    else:
+                        self.render(
+                            'permalink.html',
+                            post=post,
+                            error='You have already liked it',
+                            likes=likes,
+                            unlikes=unlikes,
+                            comments=prev_comments,
+                            )
+                else:
+                    self.render(
+                        'permalink.html',
+                        post=post,
+                        error='You cannot like your own post',
+                        likes=likes,
+                        unlikes=unlikes,
+                        comments=prev_comments,
+                        )
+
+            if self.request.get('unlike'):
+
+                if not self.user:
+                    self.redirect('/blog/login')
+                    return
+
+                if post.author_id != str(self.user.key().id()):
+                    if prev_unliked == 0:
+                        l = Unlikes(post=post, user=user_id)
+                        l.put()
+                        time.sleep(0.1)
+                        self.redirect('/blog/%s' % str(post.key().id()))
+                    else:
+                        self.render(
+                            'permalink.html',
+                            post=post,
+                            error='You have already unliked it',
+                            likes=likes,
+                            unlikes=unlikes,
+                            comments=prev_comments,
+                            )
+                else:
+                    self.render(
+                        'permalink.html',
+                        post=post,
+                        error='You cannot unlike your own post',
+                        likes=likes,
+                        unlikes=unlikes,
+                        comments=prev_comments,
+                        )
+
+            if self.request.get('comment'):
+
+                if not self.user:
+                    self.redirect('/blog/login')
+                    return
+
+                comment = self.request.get('commentbox')
+                if not comment:
+                    self.render(
+                        'permalink.html',
+                        post=post,
+                        error='You cannot submit a blank comment',
+                        likes=likes,
+                        unlikes=unlikes,
+                        comments=prev_comments,
+                        )
+                else:
+                    c = Comments(post=post, user=user_id, comment=comment,
                              author=str(self.user.key().id()),
                              author_name=str(self.user.name))
-                c.put()
-                time.sleep(0.1)
-                self.redirect('/blog/%s' % str(post.key().id()))
+                    c.put()
+                    time.sleep(0.1)
+                    self.redirect('/blog/%s' % str(post.key().id()))
 
 
 class EditComment(BlogHandler):
 
     def get(self, id):
+
+        if not self.user:
+            self.redirect('/blog/login')
+            return
+
         key = db.Key.from_path('Comments', int(id))
         comment = db.get(key)
-        self.render('editcomment.html', post=comment.post, x=comment)
+
+        if not comment:
+            return self.redirect('/blog/login')
+            return
+
+        if comment.user.name == self.user.name :
+            self.render('editcomment.html', post=comment.post, x=comment)
+            return
+        else:
+            self.redirect('/blog/%s' % comment.post.key().id() )
+
 
     def post(self, id):
+
+        if not self.user:
+            self.redirect('/blog/login')
+            return
+
         key = db.Key.from_path('Comments', int(id))
         comment = db.get(key)
 
+        if not comment:
+            return self.redirect('/blog/login')
+            return
+
         if self.request.get('editcomment'):
+
+            if not self.user:
+                self.redirect('/blog/login')
+                return
 
             if str(comment.user.name) != str(self.user.name):
                 self.render('editcomment.html', post=comment.post,
@@ -494,6 +558,11 @@ class EditComment(BlogHandler):
                     self.redirect('/blog/%s' % comment.post.key().id())
 
         if self.request.get('deletecomment'):
+
+            if not self.user:
+                self.redirect('/blog/login')
+                return
+
             self.write(comment.user)
             if str(comment.user.name) != str(self.user.name):
                 self.render('editcomment.html', post=comment.post,
@@ -506,6 +575,11 @@ class EditComment(BlogHandler):
                 self.redirect('/blog/%s' % string)
 
         if self.request.get('cancel'):
+
+            if not self.user:
+                self.redirect('/blog/login')
+                return
+
             self.redirect('/blog/%s' % comment.post.key().id())
 
 
@@ -514,6 +588,10 @@ class DeletePost(BlogHandler):
     def get(self, id):
         key = db.Key.from_path('Post', int(id), parent=blog_key())
         post = db.get(key)
+
+        if not post:
+            self.redirect('/blog/login')
+            return
 
         if self.user and post and post.author_id \
            == str(self.user.key().id()):
@@ -530,6 +608,11 @@ class EditPost(BlogHandler):
     def get(self, id):
         key = db.Key.from_path('Post', int(id), parent=blog_key())
         post = db.get(key)
+
+        if not post:
+            self.redirect('/blog/login')
+            return
+
         subject = post.subject
         content = post.content
         self.render('editpost.html', subject=subject, content=content)
@@ -538,6 +621,11 @@ class EditPost(BlogHandler):
 
         key = db.Key.from_path('Post', int(id), parent=blog_key())
         post = db.get(key)
+
+        if not post:
+            self.redirect('/blog/login')
+            return
+
 
         if not self.user or not post or not post.author_id \
            == str(self.user.key().id()):
